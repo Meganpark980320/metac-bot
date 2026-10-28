@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Literal
 
@@ -701,7 +702,7 @@ if __name__ == "__main__":
     run_mode: Literal["tournament", "metaculus_cup", "test_questions"] = args.mode
 
     check_environment(strict=True)
-    publish_to_metaculus = True
+    publish_to_metaculus = os.getenv("PUBLISH", "1") == "1"
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
 
     # Configure the bot. The `llms=` block below is commented out to use
@@ -715,17 +716,22 @@ if __name__ == "__main__":
         folder_to_save_reports_to=None,
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
-        # llms={
-        #     "default": GeneralLlm(
-        #         model="openrouter/openai/gpt-4o",
-        #         temperature=0.3,
-        #         timeout=40,
-        #         allowed_tries=2,
-        #     ),
-        #     "summarizer": "openai/gpt-4o-mini",
-        #     "researcher": "asknews/news-summaries",
-        #     "parser": "openai/gpt-4o-mini",
-        # },
+        llms={
+            "default": GeneralLlm(
+                model="anthropic/claude-opus-5-5",
+                temperature=None,
+                timeout=300,
+                allowed_tries=2,
+            ),
+            "summarizer": "openrouter/openai/gpt-5.4-nano",
+            "researcher": GeneralLlm(
+                model="openrouter/x-ai/grok-4.3:online",
+                temperature=0.3,
+                timeout=180,
+                allowed_tries=2,
+            ),
+            "parser": "openrouter/openai/gpt-5.4-mini",
+        },
     )
 
     # Per-mode tournament URL shown in the summary banner footer. These
