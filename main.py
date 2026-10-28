@@ -723,14 +723,14 @@ if __name__ == "__main__":
                 timeout=300,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/openai/gpt-5.4-nano",
+            "summarizer": GeneralLlm(model="anthropic/claude-haiku-5-5", temperature=None),
             "researcher": GeneralLlm(
                 model="openrouter/x-ai/grok-4.3:online",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
             ),
-            "parser": "openrouter/openai/gpt-5.4-mini",
+            "parser": GeneralLlm(model="anthropic/claude-haiku-5-5", temperature=None),
         },
     )
 
